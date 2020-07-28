@@ -2,6 +2,7 @@
 // =============================================================
 var express = require("express");
 var path = require("path");
+var fs = require("fs")
 
 // Sets up the Express App
 // =============================================================
@@ -11,6 +12,9 @@ var PORT = 3000;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+
+var notes = []
 
 // Routes
 // =============================================================
@@ -26,7 +30,12 @@ app.get("/notes", function(req, res) {
 
 // read all saved notes
 app.get("/api/notes", function(req, res) {
-  return res.json(characters);
+  fs.readFile("db/db.json",(err, data) => {
+    if (err) throw err;
+    notes = JSON.parse(data)
+    // console.log(notes)
+    return res.json(notes)
+  });
 });
 
 // add note
