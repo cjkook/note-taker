@@ -7,50 +7,21 @@ var fs = require("fs")
 // Sets up the Express App
 // =============================================================
 var app = express();
-var PORT = 3000;
+var PORT = 8080;
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
-var notes = []
+// This express.static middleware makes it possible to designate directories as "static"; this means that anytime a request comes in, Express looks in the directory specified *first* (in this case, "public") before checking any other routes which makes storing static files like CSS, front end JS, images, etc easy; when linking to a file stored in an this directory from a front end file, be sure to omit the "public" directory section of the url path, and instead begin the url path with the location INSIDE "public"
+app.use(express.static("public"));
 
 // Routes
 // =============================================================
 
-// Basic route that sends the user first to the AJAX Page
-app.get("/", function(req, res) {
-  res.sendFile(path.join(__dirname,"public/index.html"));
-});
-
-app.get("/notes", function(req, res) {
-  res.sendFile(path.join(__dirname, "public/notes.html"));
-});
-
-// read all saved notes
-app.get("/api/notes", function(req, res) {
-  fs.readFile("db/db.json",(err, data) => {
-    if (err) throw err;
-    notes = JSON.parse(data)
-    // console.log(notes)
-    return res.json(notes)
-  });
-});
-
-// add note
-app.post("/api/notes", function(req, res) {
-  // ! encapsulate note into an object/class
-  let newNote = req.body
-  
-  console.log(newNote);
-
-  // Using a RegEx Pattern to remove spaces from newCharacter
-  // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-  newNote.noteId = 123 // ! random number generation for id? Needs to check old ids for duplicates
-
-  
-});
+// The (app) at the end of each require threads the `app` object through to the routes, so they can use methods like app.get(), app.post(), etc
+require("./routes/apiroutes")(app);
+require("./routes/htmlroutes")(app);
 
 // Starts the server to begin listening
 // =============================================================
