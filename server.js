@@ -6,7 +6,6 @@ var fs = require("fs")
 
 // Sets up the Express App
 // =============================================================
-var app = express();
 const PORT = process.env.PORT || 3000;
 const app = express();
 
